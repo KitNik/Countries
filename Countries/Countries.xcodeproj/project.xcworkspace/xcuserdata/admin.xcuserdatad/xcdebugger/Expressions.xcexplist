@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[RootViewController saveNewCountry:]:RootViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[RootViewController tableView:cellForRowAtIndexPath:]:RootViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.continentsToShow[indexPath.section]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[RootViewController numberOfSectionsInTableView:]:RootViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.continentsNameKey[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

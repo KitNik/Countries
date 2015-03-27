@@ -8,7 +8,7 @@
 
 #import "EditCountryViewController.h"
 
-#define KEYBOARD_OFFSET 80
+#define KEYBOARD_OFFSET 200
 #define SCROLL_ANIMATED 0.2
 
 @interface EditCountryViewController ()
@@ -124,6 +124,16 @@
 }
 
 - (void)save {
+    if ([self.countryNameTextField.text isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"WARNING!"
+                                                        message:@"Enter the name of the country!"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
     Country *country = [[Country alloc] init];
     country.countryName = self.countryNameTextField.text;
     country.countryDescription = self.descriptionCountryTextView.text;

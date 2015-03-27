@@ -39,6 +39,7 @@
 - (void)editCountryInfo {
     UIStoryboard *storyboard = self.storyboard;
     EditCountryViewController *editCountry = [storyboard instantiateViewControllerWithIdentifier:@"EditCountryViewController"];
+    editCountry.title = @"Edit Country";
     editCountry.country = self.country;
     editCountry.continents = self.continentsNames;
     editCountry.delegate = self.rootController;

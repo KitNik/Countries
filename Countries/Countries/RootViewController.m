@@ -25,20 +25,6 @@
 @implementation RootViewController
 
 - (void)viewDidLoad {
-//    Country *countryUK = [[Country alloc] init];
-//    countryUK.countryName = @"Ukraine";
-//    countryUK.continent = EUROPE;
-//    countryUK.countryDescription = @"Beautiful country!";
-//    
-//    Country *countryBN = [[Country alloc] init];
-//    countryBN.countryName = @"Benin";
-//    countryBN.continent = AFRICA;
-//    countryBN.countryDescription = @"Description country!";
-//    
-//    Country *countryCG = [[Country alloc] init];
-//    countryCG.countryName = @"Congo";
-//    countryCG.continent = AFRICA;
-//    countryCG.countryDescription = @"Description country!";
     
     self.continentsToShow = [NSMutableArray new];
     self.continentsNameKey = [NSArray arrayWithObjects:AFRICA, ASIA, EUROPE, NORTH_AMERICA, OCEANIA, SOUTH_AMERICA, nil];
@@ -51,12 +37,6 @@
     }
     
     self.continents = [NSDictionary dictionaryWithDictionary:tempDictionary];
-    
-//    NSMutableArray *tempArr = [self.continents objectForKey:EUROPE];
-//    [tempArr addObject:countryUK];
-//    tempArr = [self.continents objectForKey:AFRICA];
-//    [tempArr addObject:countryBN];
-//    [tempArr addObject:countryCG];
     
     [super viewDidLoad];
     
@@ -150,6 +130,7 @@
 - (void)addCountry {
     UIStoryboard *storyboard = self.storyboard;
     EditCountryViewController *editCountry = [storyboard instantiateViewControllerWithIdentifier:@"EditCountryViewController"];
+    editCountry.title = @"New Country";
     editCountry.continents = self.continentsNameKey;
     editCountry.delegate = self;
 

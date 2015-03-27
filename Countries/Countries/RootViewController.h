@@ -10,7 +10,7 @@
 #import "EditCountryViewController.h"
 #import "MoreCountryInfoViewController.h"
 
-@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EditCountryViewControllerDelegate, MoreCountryInfoViewControllerDelegate>
+@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EditCountryViewControllerDelegate>
 
 @end
 

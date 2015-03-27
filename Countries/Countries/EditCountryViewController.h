@@ -14,6 +14,7 @@
 @optional
 - (void)saveCountry:(Country *)newCountry;
 - (void)deleteCountry:(Country *)country;
+- (void)saveChangesIn:(Country *)currentCountry orReplaceBy:(Country *)newCountry;
 
 @end
 

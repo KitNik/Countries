@@ -10,18 +10,10 @@
 #import "Country.h"
 #import "EditCountryViewController.h"
 
-@protocol MoreCountryInfoViewControllerDelegate <NSObject>
-
-@optional
-//- (void)saveCountryChanges:(Country *)country;
-//- (void)deleteCountryWithChanges:(Country *)country;
-
-@end
-
-@interface MoreCountryInfoViewController : UIViewController <EditCountryViewControllerDelegate>
+@interface MoreCountryInfoViewController : UIViewController
 
 @property(nonatomic)Country *country;
 @property(nonatomic)NSArray *continentsNames;
-@property(nonatomic, strong)id <MoreCountryInfoViewControllerDelegate> delegate;
+@property(nonatomic)id rootController;
 
 @end

@@ -41,24 +41,9 @@
     EditCountryViewController *editCountry = [storyboard instantiateViewControllerWithIdentifier:@"EditCountryViewController"];
     editCountry.country = self.country;
     editCountry.continents = self.continentsNames;
-    editCountry.delegate = self;
+    editCountry.delegate = self.rootController;
     
     [self.navigationController pushViewController:editCountry animated:YES];
 }
-
-//#pragma mark - EditCountryViewControllerDelegate
-//
-//- (void)saveCountry:(Country *)newCountry {
-//    if ([self.delegate respondsToSelector:@selector(saveCountryChanges:)]) {
-//        [self.delegate saveCountryChanges:newCountry];
-//    }
-//}
-//
-//- (void)deleteCountry:(Country *)country {
-//    if ([self.delegate respondsToSelector:@selector(deleteCountryWithChanges:)]) {
-//        [self.delegate deleteCountryWithChanges:country];
-//    }
-//}
-
 
 @end

@@ -13,7 +13,6 @@
 
 @interface RootViewController ()
 
-@property(nonatomic)NSMutableArray *listCountries;
 @property(nonatomic)NSDictionary *continents;
 @property(nonatomic)NSArray *continentsNameKey;
 @property(nonatomic)NSMutableArray *continentsToShow;
@@ -39,7 +38,6 @@
     countryCG.continent = AFRICA;
     countryCG.countryDescription = @"Description country!";
     
-    //self.listCountries = [[NSMutableArray alloc] init];
     self.continentsToShow = [NSMutableArray new];
     self.continentsNameKey = [NSArray arrayWithObjects:AFRICA, ASIA, EUROPE, NORTH_AMERICA, OCEANIA, SOUTH_AMERICA, nil];
     
@@ -125,7 +123,7 @@
     NSMutableArray *tempArr = [self.continents objectForKey:self.continentsToShow[indexPath.section]];
     moreInfo.country = tempArr[indexPath.row];
     moreInfo.continentsNames = self.continentsNameKey;
-    moreInfo.delegate = self;
+    moreInfo.rootController = self;
     
     [self.navigationController pushViewController:moreInfo animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -137,20 +135,13 @@
     [self saveNewCountry:newCountry];
 }
 
+- (void)saveChangesIn:(Country *)currentCountry orReplaceBy:(Country *)newCountry {
+    [self saveChangesInCountry:currentCountry orReplaceBy:newCountry];
+}
+
 - (void)deleteCountry:(Country *)country {
     [self removeCountry:country];
 }
-
-#pragma mark - MoreCountryInfoViewControllerDelegate
-
-- (void)saveCountryChanges:(Country *)country {
-    [self saveCountryChanges:country];
-}
-
-- (void)deleteCountryWithChanges:(Country *)country {
-    [self removeCountry:country];
-}
-
 
 #pragma mark - Actions
 
@@ -176,9 +167,11 @@
     }
 }
 
-- (void)saveChangesInCountry:(Country *)country {
-    [self removeCountry:country];
-    [self saveNewCountry:country];
+- (void)saveChangesInCountry:(Country *)currentCountry orReplaceBy:(Country *)newCountry {
+    [self removeCountry:currentCountry];
+    [self.countriesTable reloadData];
+    [self saveNewCountry:newCountry];
+    [self.countriesTable reloadData];
 }
 
 - (void)removeCountry:(Country *)country {
@@ -187,6 +180,17 @@
         Country *tempCountry = [tempArr objectAtIndex:i];
         if ([tempCountry.countryName isEqualToString:country.countryName]) {
             [tempArr removeObjectAtIndex:i];
+            if (!tempArr.count) {
+                [self.continentsToShow removeObjectAtIndex:[self.continentsToShow indexOfObject:country.continent]];
+            }
+            if ([self.continentsToShow containsObject:country.continent]) {
+                [self reloadShowSection];
+                NSInteger reloadContinentIndex = [self.continentsToShow indexOfObject:country.continent];
+                [self.countriesTable reloadSections:[NSIndexSet indexSetWithIndex:reloadContinentIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+            } else {
+                [self reloadShowSection];
+            }
+            [self.countriesTable reloadData];
             break;
         }
     }

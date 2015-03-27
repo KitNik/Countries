@@ -85,8 +85,6 @@
     [self.descriptionCountryTextView endEditing:YES];
 }
 
-
-
 #pragma mark - Actions
 
 - (IBAction)deleteCountry:(id)sender {
@@ -97,18 +95,26 @@
         country.continent = self.continents[[self.continentsPickerView selectedRowInComponent:0]];
         [self.delegate deleteCountry:country];
     }
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (void)save {
-    if ([self.delegate respondsToSelector:@selector(saveCountry:)]) {
-        Country *country = [[Country alloc] init];
-        country.countryName = self.countryNameTextField.text;
-        country.countryDescription = self.descriptionCountryTextView.text;
-        country.continent = self.continents[[self.continentsPickerView selectedRowInComponent:0]];
-        [self.delegate saveCountry:country];
+    Country *country = [[Country alloc] init];
+    country.countryName = self.countryNameTextField.text;
+    country.countryDescription = self.descriptionCountryTextView.text;
+    country.continent = self.continents[[self.continentsPickerView selectedRowInComponent:0]];
+    
+    if (self.country) {
+        if ([self.delegate respondsToSelector:@selector(saveChangesIn:orReplaceBy:)]) {
+            [self.delegate saveChangesIn:self.country orReplaceBy:country];
+        }
+    } else {
+        if ([self.delegate respondsToSelector:@selector(saveCountry:)]) {
+            [self.delegate saveCountry:country];
+        }
     }
-    [self.navigationController popViewControllerAnimated:YES];
+    
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end

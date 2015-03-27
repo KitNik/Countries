@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Country : NSObject
+@interface Country : NSObject <NSCoding>
 
 @property(nonatomic)NSString *countryName;
 @property(nonatomic)NSString *countryDescription;

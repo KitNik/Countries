@@ -11,6 +11,8 @@
 #import "ConstContinents.h"
 #import "Country.h"
 
+#define CONTINENT_DATA_KEY @"ContinentsData"
+
 @interface RootViewController ()
 
 @property(nonatomic)NSDictionary *continents;
@@ -23,20 +25,20 @@
 @implementation RootViewController
 
 - (void)viewDidLoad {
-    Country *countryUK = [[Country alloc] init];
-    countryUK.countryName = @"Ukraine";
-    countryUK.continent = EUROPE;
-    countryUK.countryDescription = @"Beautiful country!";
-    
-    Country *countryBN = [[Country alloc] init];
-    countryBN.countryName = @"Benin";
-    countryBN.continent = AFRICA;
-    countryBN.countryDescription = @"Description country!";
-    
-    Country *countryCG = [[Country alloc] init];
-    countryCG.countryName = @"Congo";
-    countryCG.continent = AFRICA;
-    countryCG.countryDescription = @"Description country!";
+//    Country *countryUK = [[Country alloc] init];
+//    countryUK.countryName = @"Ukraine";
+//    countryUK.continent = EUROPE;
+//    countryUK.countryDescription = @"Beautiful country!";
+//    
+//    Country *countryBN = [[Country alloc] init];
+//    countryBN.countryName = @"Benin";
+//    countryBN.continent = AFRICA;
+//    countryBN.countryDescription = @"Description country!";
+//    
+//    Country *countryCG = [[Country alloc] init];
+//    countryCG.countryName = @"Congo";
+//    countryCG.continent = AFRICA;
+//    countryCG.countryDescription = @"Description country!";
     
     self.continentsToShow = [NSMutableArray new];
     self.continentsNameKey = [NSArray arrayWithObjects:AFRICA, ASIA, EUROPE, NORTH_AMERICA, OCEANIA, SOUTH_AMERICA, nil];
@@ -44,17 +46,17 @@
     NSMutableDictionary *tempDictionary = [[NSMutableDictionary alloc] init];
     
     for(NSInteger i = 0; i < self.continentsNameKey.count; i++) {
-        NSMutableArray *countries = [[NSMutableArray alloc] init];
+        NSMutableArray *countries = [[NSMutableArray alloc] initWithArray:[self readFromDisk:self.continentsNameKey[i]]];
         [tempDictionary setObject:countries forKey:self.continentsNameKey[i]];
     }
     
     self.continents = [NSDictionary dictionaryWithDictionary:tempDictionary];
     
-    NSMutableArray *tempArr = [self.continents objectForKey:EUROPE];
-    [tempArr addObject:countryUK];
-    tempArr = [self.continents objectForKey:AFRICA];
-    [tempArr addObject:countryBN];
-    [tempArr addObject:countryCG];
+//    NSMutableArray *tempArr = [self.continents objectForKey:EUROPE];
+//    [tempArr addObject:countryUK];
+//    tempArr = [self.continents objectForKey:AFRICA];
+//    [tempArr addObject:countryBN];
+//    [tempArr addObject:countryCG];
     
     [super viewDidLoad];
     
@@ -165,6 +167,8 @@
     } else {
         [self reloadShowSection];
     }
+    NSArray *arr = [self.continents objectForKey:newCountry.continent];
+    [self reSaveOnDisk:arr byKey:newCountry.continent];
 }
 
 - (void)saveChangesInCountry:(Country *)currentCountry orReplaceBy:(Country *)newCountry {
@@ -172,6 +176,10 @@
     [self.countriesTable reloadData];
     [self saveNewCountry:newCountry];
     [self.countriesTable reloadData];
+    NSArray *arr = [self.continents objectForKey:currentCountry.continent];
+    [self reSaveOnDisk:arr byKey:currentCountry.continent];
+    arr = [self.continents objectForKey:currentCountry.continent];
+    [self reSaveOnDisk:arr byKey:newCountry.continent];
 }
 
 - (void)removeCountry:(Country *)country {
@@ -191,9 +199,43 @@
                 [self reloadShowSection];
             }
             [self.countriesTable reloadData];
+            
+            NSArray *arr = [self.continents objectForKey:country.continent];
+            [self reSaveOnDisk:arr byKey:country.continent];
+            
             break;
         }
     }
+}
+
+#pragma mark - UserDefaults
+
+- (void)reSaveOnDisk:(NSArray *)object byKey:(NSString *)key{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSData *dataObject = [userDefaults objectForKey:key];
+    
+    if (dataObject == nil) {
+        NSData *journalDataObject = [NSKeyedArchiver archivedDataWithRootObject:object];
+        
+        [userDefaults setObject:journalDataObject forKey:key];
+        [userDefaults synchronize];
+        
+        return;
+    }
+    
+    dataObject = [NSKeyedArchiver archivedDataWithRootObject:object];
+    
+    [userDefaults removeObjectForKey:key];
+    [userDefaults setObject:dataObject forKey:key];
+    [userDefaults synchronize];
+}
+
+- (NSArray *)readFromDisk:(NSString *)key {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSData *dataObject = [userDefaults objectForKey:key];
+    NSArray *countries = [[NSArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:dataObject]];
+    
+    return countries;
 }
 
 @end

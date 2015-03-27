@@ -8,12 +8,16 @@
 
 #import "EditCountryViewController.h"
 
+#define KEYBOARD_OFFSET 80
+#define SCROLL_ANIMATED 0.2
+
 @interface EditCountryViewController ()
 
 @property (unsafe_unretained, nonatomic) IBOutlet UIPickerView *continentsPickerView;
 @property (weak, nonatomic) IBOutlet UITextField *countryNameTextField;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionCountryTextView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+@property (nonatomic) BOOL textViewSelected;
 
 @end
 
@@ -75,14 +79,35 @@
     return YES;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if ([textField isEqual:self.countryNameTextField]) {
+        self.textViewSelected = NO;
+    }
+}
+
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     [self.countryNameTextField endEditing:YES];
 }
 
 #pragma mark - UITextViewDelegate
 
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if ([textView isEqual:self.descriptionCountryTextView]) {
+        self.textViewSelected = YES;
+        if  (self.view.frame.origin.y >= 0) {
+            [self moveView:YES];
+        }
+    }
+}
+
 - (void)textViewDidEndEditing:(UITextView *)textView {
     [self.descriptionCountryTextView endEditing:YES];
+}
+
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if([text isEqualToString:@"\n"])
+        [textView resignFirstResponder];
+    return YES;
 }
 
 #pragma mark - Actions
@@ -115,6 +140,69 @@
     }
     
     [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+#pragma  mark - MoveUIViewWithKeyboard
+
+-(void)moveView:(BOOL)move {
+    if (!self.textViewSelected) {
+        return;
+    }
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:SCROLL_ANIMATED];
+    
+    CGRect rect = self.view.frame;
+    if (move) {
+        rect.origin.y -= KEYBOARD_OFFSET;
+        rect.size.height += KEYBOARD_OFFSET;
+    } else {
+        rect.origin.y += KEYBOARD_OFFSET;
+        rect.size.height -= KEYBOARD_OFFSET;
+    }
+    self.view.frame = rect;
+    
+    [UIView commitAnimations];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardWillShowNotification
+                                                  object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardWillHideNotification
+                                                  object:nil];
+}
+
+-(void)keyboardWillShow {
+    if (self.view.frame.origin.y >= 0) {
+        [self moveView:YES];
+    } else if (self.view.frame.origin.y < 0) {
+        [self moveView:NO];
+    }
+}
+
+-(void)keyboardWillHide {
+    if (self.view.frame.origin.y >= 0) {
+        [self moveView:YES];
+    } else if (self.view.frame.origin.y < 0) {
+        [self moveView:NO];
+    }
 }
 
 @end
